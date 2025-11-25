@@ -1,0 +1,10 @@
+# Windows system files
+AppData/
+Thumbs.db
+Desktop.ini
+*.log
+*.tmp
+
+# Node/VSC stuff (ÿךשמ ÷)
+node_modules/
+.vscode/
