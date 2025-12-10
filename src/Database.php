@@ -21,6 +21,7 @@ class Database
         return self::$db;
     }
 
+    // Реєстрація з хешуванням паролю
     public static function register($username, $password)
     {
         $db = self::connect();
@@ -28,25 +29,30 @@ class Database
         $stmt = $db->prepare("INSERT INTO Users (username, password) VALUES (:u, :p)");
 
         try {
+            $hashedPassword = password_hash($password, PASSWORD_BCRYPT); // bcrypt
             return $stmt->execute([
                 ":u" => $username,
-                ":p" => $password,
+                ":p" => $hashedPassword,
             ]);
         } catch (PDOException $e) {
             return false;
         }
     }
 
+    // Логін з перевіркою хеша
     public static function login($username, $password)
     {
         $db = self::connect();
 
-        $stmt = $db->prepare("SELECT * FROM Users WHERE username = :u AND password = :p");
-        $stmt->execute([
-            ":u" => $username,
-            ":p" => $password
-        ]);
+        $stmt = $db->prepare("SELECT * FROM Users WHERE username = :u");
+        $stmt->execute([":u" => $username]);
 
-        return $stmt->fetch(PDO::FETCH_ASSOC);
+        $user = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($user && password_verify($password, $user['password'])) { // перевірка bcrypt
+            return $user;
+        }
+
+        return false;
     }
 }
