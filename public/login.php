@@ -1,22 +1,24 @@
 <?php
-require __DIR__ . '/../vendor/autoload.php';
 require __DIR__ . '/../src/Database.php';
 
 $message = "";
 
 if ($_SERVER["REQUEST_METHOD"] === "POST") {
-
-    $username = $_POST["username"];
-    $password = $_POST["password"];
+    // XSS-фільтр на вхідні дані
+    $username = htmlspecialchars($_POST["username"], ENT_QUOTES, 'UTF-8');
+    $password = htmlspecialchars($_POST["password"], ENT_QUOTES, 'UTF-8');
 
     $user = Database::login($username, $password);
 
     if ($user) {
-        $message = "Ви успішно увійшли, " . $user["username"];
+        $message = "Ви успішно увійшли, " . htmlspecialchars($user["username"], ENT_QUOTES, 'UTF-8');
     } else {
         $message = "Невірний логін або пароль.";
     }
 }
+
+// Екранування повідомлення
+$safeMessage = htmlspecialchars($message, ENT_QUOTES, 'UTF-8');
 ?>
 
 <h1>Логін</h1>
@@ -27,6 +29,6 @@ if ($_SERVER["REQUEST_METHOD"] === "POST") {
     <button type="submit">Увійти</button>
 </form>
 
-<p><?= $message ?></p>
+<p><?= $safeMessage ?></p>
 
 <a href="/register.php">Реєстрація</a>
