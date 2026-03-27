@@ -1,16 +1,14 @@
 <?php
 
 require __DIR__ . '/../vendor/autoload.php';
+require __DIR__ . '/../src/Database.php';
 
-use Monolog\Logger;
-use Monolog\Handler\StreamHandler;
-use Carbon\Carbon;
+echo "<h1>My PHP project works!</h1>";
 
-$log = new Logger("main");
-$log->pushHandler(new StreamHandler("app.log"));
+$db = Database::connect();
 
-dump("varDumper працює!");
+Database::register("test", "1234");
 
-$log->info("Сторінка запущена");
+$user = Database::login("test", "1234");
 
-echo "Зараз: " . Carbon::now();
+dump($user);

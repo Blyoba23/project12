@@ -1,0 +1,9 @@
+AppData/
+Thumbs.db
+Desktop.ini
+*.log
+*.tmp
+.vscode/
+node_modules/
+
+vendor/
